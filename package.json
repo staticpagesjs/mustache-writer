@@ -1,0 +1,66 @@
+{
+  "name": "@static-pages/mustache-writer",
+  "version": "0.0.0",
+  "description": "Mustache template engine for Static Pages.",
+  "type": "module",
+  "main": "./cjs/index.js",
+  "module": "./esm/index.js",
+  "browser": "./esm/index.js",
+  "exports": {
+    ".": {
+      "require": "./cjs/index.js",
+      "default": "./esm/index.js"
+    }
+  },
+  "engines": {
+    "node": ">13.2.0"
+  },
+  "scripts": {
+    "prepack": "npm run build",
+    "build": "npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc",
+    "build:cjs": "tsc --outDir cjs --module commonjs",
+    "watch:esm": "tsc --watch",
+    "watch:cjs": "tsc --watch --outDir cjs --module commonjs",
+    "test": "eslint src && npm run build && jest",
+    "clean": "rimraf esm cjs/*.?s"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/staticpagesjs/mustache-writer.git"
+  },
+  "keywords": [
+    "static",
+    "pages",
+    "generator",
+    "renderer",
+    "mvc",
+    "jamstack",
+    "view",
+    "template",
+    "controller",
+    "mustache",
+    "writer"
+  ],
+  "author": "László BULIK",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/staticpagesjs/mustache-writer/issues"
+  },
+  "homepage": "https://staticpagesjs.github.io/",
+  "dependencies": {
+    "@static-pages/file-writer": "^2.0.0",
+    "mustache": "^4.2.0",
+    "showdown": "^2.0.3"
+  },
+  "devDependencies": {
+    "@types/mustache": "^4.1.2",
+    "@types/showdown": "^1.9.4",
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
+    "eslint": "^8.0.1",
+    "jest": "^27.3.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.4.4"
+  }
+}
