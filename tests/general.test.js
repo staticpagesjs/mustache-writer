@@ -1,15 +1,16 @@
-const fs = require('fs');
-jest.spyOn(fs, 'writeFileSync').mockImplementation();
-jest.spyOn(fs, 'mkdirSync').mockImplementation();
+import * as fs from 'fs';
+import * as path from 'path';
+import { fileURLToPath } from 'url';
+import rimraf from 'rimraf';
+import { mustacheWriter } from '../esm/index.js';
 
-const path = require('path');
-const { mustacheWriter } = require('../cjs/index');
+// cwd should be in tests folder where we provide a proper folder structure.
+process.chdir(path.dirname(fileURLToPath(import.meta.url)));
 
-process.chdir(__dirname); // cwd should be in tests folder where we provide a proper folder structure.
 // TODO: mock fs to provide a more stable environment for the tests?
 
 afterEach(() => {
-	jest.clearAllMocks();
+	rimraf.sync('dist');
 });
 
 test('can initialize a writer with default parameters', async () => {
@@ -29,11 +30,11 @@ test('can render a simple template', async () => {
 		body: 'foo',
 	});
 
-	const expectedPath = path.resolve('dist/unnamed.html');
+	const expectedPath = 'dist/unnamed.html';
 	const expectedContent = 'hello world!<p>foo</p>';
 
-	expect(fs.writeFileSync).toHaveBeenCalledTimes(1);
-	expect(fs.writeFileSync).toHaveBeenCalledWith(expectedPath, expectedContent);
+	expect(fs.existsSync(expectedPath)).toBe(true);
+	expect(fs.readFileSync(expectedPath, 'utf-8')).toBe(expectedContent);
 });
 
 test('can set output dir', async () => {
@@ -49,11 +50,11 @@ test('can set output dir', async () => {
 		body: 'foo',
 	});
 
-	const expectedPath = path.resolve('dist/unnamed.html');
+	const expectedPath = 'dist/unnamed.html';
 	const expectedContent = 'hello world!<p>foo</p>';
 
-	expect(fs.writeFileSync).toHaveBeenCalledTimes(1);
-	expect(fs.writeFileSync).toHaveBeenCalledWith(expectedPath, expectedContent);
+	expect(fs.existsSync(expectedPath)).toBe(true);
+	expect(fs.readFileSync(expectedPath, 'utf-8')).toBe(expectedContent);
 });
 
 test('can set outfile name via url', async () => {
@@ -68,11 +69,11 @@ test('can set outfile name via url', async () => {
 		body: 'foo',
 	});
 
-	const expectedPath = path.resolve('dist/my/output.file.html');
+	const expectedPath = 'dist/my/output.file.html';
 	const expectedContent = 'hello world!<p>foo</p>';
 
-	expect(fs.writeFileSync).toHaveBeenCalledTimes(1);
-	expect(fs.writeFileSync).toHaveBeenCalledWith(expectedPath, expectedContent);
+	expect(fs.existsSync(expectedPath)).toBe(true);
+	expect(fs.readFileSync(expectedPath, 'utf-8')).toBe(expectedContent);
 });
 
 test('can set outfile name via header.path', async () => {
@@ -89,11 +90,11 @@ test('can set outfile name via header.path', async () => {
 		body: 'foo',
 	});
 
-	const expectedPath = path.resolve('dist/my/output.html');
+	const expectedPath = 'dist/my/output.html';
 	const expectedContent = 'hello world!<p>foo</p>';
 
-	expect(fs.writeFileSync).toHaveBeenCalledTimes(1);
-	expect(fs.writeFileSync).toHaveBeenCalledWith(expectedPath, expectedContent);
+	expect(fs.existsSync(expectedPath)).toBe(true);
+	expect(fs.readFileSync(expectedPath, 'utf-8')).toBe(expectedContent);
 });
 
 test('can set outfile name via outFile option', async () => {
@@ -109,11 +110,11 @@ test('can set outfile name via outFile option', async () => {
 		body: 'foo',
 	});
 
-	const expectedPath = path.resolve('dist/my/output.file');
+	const expectedPath = 'dist/my/output.file';
 	const expectedContent = 'hello world!<p>foo</p>';
 
-	expect(fs.writeFileSync).toHaveBeenCalledTimes(1);
-	expect(fs.writeFileSync).toHaveBeenCalledWith(expectedPath, expectedContent);
+	expect(fs.existsSync(expectedPath)).toBe(true);
+	expect(fs.readFileSync(expectedPath, 'utf-8')).toBe(expectedContent);
 });
 
 test('can turn off custom markdown filter', async () => {
@@ -124,11 +125,11 @@ test('can turn off custom markdown filter', async () => {
 		body: 'foo',
 	});
 
-	const expectedPath = path.resolve('dist/unnamed.html');
+	const expectedPath = 'dist/unnamed.html';
 	const expectedContent = 'hello world!foo';
 
-	expect(fs.writeFileSync).toHaveBeenCalledTimes(1);
-	expect(fs.writeFileSync).toHaveBeenCalledWith(expectedPath, expectedContent);
+	expect(fs.existsSync(expectedPath)).toBe(true);
+	expect(fs.readFileSync(expectedPath, 'utf-8')).toBe(expectedContent);
 });
 
 test('can configure showdown', async () => {
@@ -155,9 +156,9 @@ test('can configure showdown', async () => {
 		},
 	});
 
-	const expectedPath = path.resolve('dist/unnamed.html');
+	const expectedPath = 'dist/unnamed.html';
 	const expectedContent = '<h2 id="foo">foo</h2><p>bar</p>';
 
-	expect(fs.writeFileSync).toHaveBeenCalledTimes(1);
-	expect(fs.writeFileSync).toHaveBeenCalledWith(expectedPath, expectedContent);
+	expect(fs.existsSync(expectedPath)).toBe(true);
+	expect(fs.readFileSync(expectedPath, 'utf-8')).toBe(expectedContent);
 });
