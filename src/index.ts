@@ -11,15 +11,13 @@ export type MustacheWriterOptions = {
 	showdownOptions?: showdown.ConverterOptions;
 } & Omit<FileWriterOptions, 'renderer'>;
 
-export const mustacheWriter = (options: MustacheWriterOptions = {}) => {
-	const {
-		view = 'main.mustache',
-		viewsDir = 'views',
-		showdownEnabled = [],
-		showdownOptions = {},
-		...rest
-	} = options;
-
+export const mustacheWriter = ({
+	view = 'main.mustache',
+	viewsDir = 'views',
+	showdownEnabled = [],
+	showdownOptions = {},
+	...rest
+}: MustacheWriterOptions = {}) => {
 	if (typeof view !== 'string' && typeof view !== 'function')
 		throw new Error('mustache-writer \'view\' option expects a string or a function.');
 
@@ -33,8 +31,7 @@ export const mustacheWriter = (options: MustacheWriterOptions = {}) => {
 		throw new Error('mustache-writer \'showdownOptions\' option expects an object.');
 
 	// Provide a built-in markdown filter
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	let applyMd = (x: Record<string, unknown>, _p: string[]): void => undefined;
+	let applyMd = (_o: Record<string, unknown>, _p: string[]): void => undefined;
 	if (showdownEnabled) {
 		const converter = new showdown.Converter({
 			simpleLineBreaks: true,
