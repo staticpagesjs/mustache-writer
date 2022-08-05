@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import showdown from 'showdown';
-import mustache from 'mustache';
+import * as showdown from 'showdown';
+import * as mustache from 'mustache';
 import { fileWriter, FileWriterOptions } from '@static-pages/file-writer';
 
 export type MustacheWriterOptions = {
@@ -33,7 +33,7 @@ export const mustacheWriter = ({
 	// Provide a built-in markdown filter
 	let applyMd: { (o: Record<string, unknown>, p: string[]): void } = () => undefined;
 	if (showdownEnabled) {
-		const converter = new showdown.Converter({
+		const converter = new ((showdown as unknown as { default: typeof showdown })?.default ?? showdown).Converter({
 			simpleLineBreaks: true,
 			ghCompatibleHeaderId: true,
 			customizedHeaderId: true,
@@ -72,7 +72,7 @@ export const mustacheWriter = ({
 			for (const objectPath of showdownEnabled) {
 				applyMd(data, objectPath.split('.'));
 			}
-			return mustache.render(
+			return ((mustache as unknown as { default: typeof mustache })?.default ?? mustache).render(
 				fs.readFileSync(path.resolve(viewDir, resolvedView), 'utf-8'),
 				data
 			);
